@@ -1,3 +1,12 @@
+## lafu-server
+
+[0] 서버 환경 설정
+
+[] 회원가입 api 생성
+    - accessToken, refreshToken 생성하는 함수
+    - authToken 모델 생성
+    - 리펙토링
+
 ## GO Modules 커맨드 정리
 
 - go mod init [module-name]

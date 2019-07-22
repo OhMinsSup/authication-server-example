@@ -11,7 +11,8 @@ import (
 
 // Migrate automigrates schema using ORM
 func Migrate(db *gorm.DB) {
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&User{}, &AuthToken{})
+	db.Model(&AuthToken{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
 	fmt.Println("Auto Migration has beed processed")
 }
 
