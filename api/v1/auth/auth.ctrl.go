@@ -11,20 +11,6 @@ import (
 	"time"
 )
 
-func generateUserToken(db *gorm.DB, userID string) (string, string) {
-	authToken := models.AuthToken{
-		UserID: userID,
-	}
-
-	db.NewRecord(authToken)
-	db.Create(&authToken)
-
-	refreshToken := lib.Generate()
-	accessToken := lib.Generate()
-
-	return refreshToken, accessToken
-}
-
 func localRegister(c echo.Context) error {
 	db := c.Get("db").(*gorm.DB)
 	body := new (schema.LocalRegisterSchema)
@@ -59,18 +45,32 @@ func localRegister(c echo.Context) error {
 	db.NewRecord(user)
 	db.Create(&user)
 
+	authToken := models.AuthToken{
+		UserID:user.ID,
+	}
+
+	db.NewRecord(authToken)
+	db.Create(&authToken)
+
+	accessData := user.TokenData("")
+	refreshData := user.TokenData(authToken.ID)
 	serialized := user.Serialize()
-	refreshToken, accessToken := generateUserToken(db, user.ID)
+
+	tokens, err := lib.GenerateUserToken(accessData, refreshData)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
 
 	accessTokenCookie := new(http.Cookie)
 	accessTokenCookie.Name = "access_token"
-	accessTokenCookie.Value = accessToken
+	accessTokenCookie.Value = tokens["access_token"]
 	accessTokenCookie.Expires = time.Now().Add(time.Hour * 24 * 7)
 
 	refreshTokenCookie := new (http.Cookie)
-	refreshTokenCookie.Name = "refresh_Token"
-	refreshTokenCookie.Value = refreshToken
-	refreshTokenCookie.Expires = time.Now().Add(time.Hour * 24 * 24 * 7)
+	refreshTokenCookie.Name = "refresh_token"
+	refreshTokenCookie.Value = tokens["refresh_token"]
+	refreshTokenCookie.Expires = time.Now().Add(time.Hour * 24 * 30)
 
 	c.SetCookie(accessTokenCookie)
 	c.SetCookie(refreshTokenCookie)
@@ -78,8 +78,8 @@ func localRegister(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"ok": true,
 		"user": serialized,
-		"refresh_Token": refreshToken,
-		"accessToken": accessToken,
+		"refreshToken": tokens["refresh_token"],
+		"accessToken": tokens["access_token"],
 	})
 }
 

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/OhMinsSup/lafu-server/api"
@@ -26,7 +24,6 @@ func main() {
 
 	defer db.Close()
 
-	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.Validator = lib.NewValidator()
 	e.Logger.SetLevel(log.INFO)
 
@@ -44,16 +41,4 @@ func main() {
 	api.ApplyRoutes(e)
 
 	e.Logger.Fatal(e.Start(":" + port))
-}
-
-func customHTTPErrorHandler(err error, c echo.Context) {
-	code := http.StatusInternalServerError
-	if he, ok := err.(*echo.HTTPError); ok {
-		code = he.Code
-	}
-	errorPage := fmt.Sprintf("%d.html", code)
-	if err := c.File(errorPage); err != nil {
-		c.Logger().Error(err)
-	}
-	c.Logger().Error(err)
 }
