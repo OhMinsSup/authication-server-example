@@ -52,7 +52,7 @@ func localRegister(c echo.Context) error {
 	db.NewRecord(authToken)
 	db.Create(&authToken)
 
-	accessData := user.TokenData("")
+	accessData := user.TokenData("null")
 	refreshData := user.TokenData(authToken.ID)
 	serialized := user.Serialize()
 

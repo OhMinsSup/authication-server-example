@@ -28,23 +28,23 @@ func GenerateUserToken(accessData JSON, refreshData JSON) (map[string]string, er
 	accessDate := time.Now().Add(time.Hour * 24 * 7)
 	refreshDate := time.Now().Add(time.Hour * 24 * 30)
 
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user": accessData,
 		"exp": accessDate.Unix(),
 	})
 	log.Println(accessToken)
-	access, errAccess := accessToken.SignedString([]byte("secret"))
-	log.Println("access",errAccess)
+	access, errAccess := accessToken.SignedString(jwtKey)
+	log.Println("access: ",errAccess)
 	if errAccess != nil {
 		return nil, errAccess
 	}
 
-	refreshToken := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user": refreshData,
 		"exp": refreshDate.Unix(),
 	})
-	refresh, errRefresh := refreshToken.SignedString([]byte("secret"))
-	log.Println("refresh",errRefresh)
+	refresh, errRefresh := refreshToken.SignedString(jwtKey)
+	log.Println("refresh: ",errRefresh)
 	if errRefresh != nil {
 		return nil, errRefresh
 	}
@@ -68,7 +68,7 @@ func RefreshUserToken(accessData JSON,  refreshData JSON, refreshTokenExp int64,
 			"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
 		 })
 
-		refreshResult, err := refreshToken.SignedString([]byte("secret"))
+		refreshResult, err := refreshToken.SignedString(jwtKey)
 		if err != nil {
 			return nil, err
 		}
@@ -80,7 +80,7 @@ func RefreshUserToken(accessData JSON,  refreshData JSON, refreshTokenExp int64,
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	access, err := accessToken.SignedString([]byte("secret"))
+	access, err := accessToken.SignedString(jwtKey)
 	if err != nil {
 		return nil, err
 	}

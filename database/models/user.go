@@ -31,7 +31,6 @@ func (user *User) TokenData(tokenID string) lib.JSON {
 		"id": user.ID,
 		"username": user.Username,
 		"email": user.Email,
-		"thumbnail": user.Thumbnail,
 		"token": tokenID,
 	}
 }
