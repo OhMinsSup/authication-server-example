@@ -2,11 +2,25 @@
 
 [0] 서버 환경 설정
 
-[] 회원가입 api 생성
-    - accessToken, refreshToken 생성하는 함수
-    - authToken 모델 생성
-    - 리펙토링
+[0] 회원가입 api 생성
+  - accessToken, refreshToken 생성하는 함수
+  - authToken 모델 생성
+  - 리펙토링
+  - 패스워드 해쉬 적용
+  
+[0] 로그인하기 
+  - accessToken, refreshToken 생성하는 함수
+  - authToken 모델 생성
+  - 리펙토링
+  - 패스워드 비교
+  - AuthToken 이 존재하면 삭제
 
+[] Authorization
+  - 로그인을 못하면 접근 못하는 미들웨어 생성
+  - 미들웨어 생성
+  - 발급기간이 지나면 refresh token을 자동으로 생성
+  - 리펙토링
+ 
 ## GO Modules 커맨드 정리
 
 - go mod init [module-name]

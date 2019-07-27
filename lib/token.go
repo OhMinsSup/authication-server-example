@@ -63,7 +63,7 @@ func RefreshUserToken(accessData JSON,  refreshData JSON, refreshTokenExp int64,
 	diff := time.Since(target) > expireDate
 	if diff {
 		log.Println("...refreshing refreshToken")
-		refreshToken := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+		refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"user": refreshData,
 			"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
 		 })
@@ -75,8 +75,8 @@ func RefreshUserToken(accessData JSON,  refreshData JSON, refreshTokenExp int64,
 		refresh = refreshResult
 	}
 
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
-		"data": accessData,
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user": accessData,
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 

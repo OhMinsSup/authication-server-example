@@ -26,7 +26,7 @@ func (user *User) Serialize() lib.JSON {
 	}
 }
 
-func (user *User) TokenData(tokenID string) lib.JSON {
+func (user *User) TokenData(tokenID interface{}) lib.JSON {
 	return lib.JSON{
 		"id": user.ID,
 		"username": user.Username,
