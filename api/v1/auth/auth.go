@@ -10,4 +10,6 @@ func ApplyRoutes(e *echo.Group) {
 
 	auth.POST("/register/local", localRegister)
 	auth.POST("/login/local", localLogin)
+	auth.POST("/logout", logout)
+	auth.GET("/test", test)
 }

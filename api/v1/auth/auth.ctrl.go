@@ -10,6 +10,23 @@ import (
 	"time"
 )
 
+func test(c echo.Context) error {
+	accessTokenCookie, err1 := c.Cookie("access_token")
+	refreshTokenCookie, err2 := c.Cookie("refresh_token")
+	if err1 != nil || err2 != nil {
+		return c.JSON(404, echo.Map{
+			"ok": false,
+			"message": "토큰이 없습니다",
+		})
+	}
+
+	return c.JSON(200, echo.Map{
+		"ok": true,
+		"access_token": accessTokenCookie,
+		"refresh_token": refreshTokenCookie,
+	})
+}
+
 func localLogin(c echo.Context) error {
 	db := c.Get("db").(*gorm.DB)
 	body := new (schema.LocalLoginSchema)
@@ -58,11 +75,17 @@ func localLogin(c echo.Context) error {
 	accessTokenCookie.Name = "access_token"
 	accessTokenCookie.Value = tokens["access_token"]
 	accessTokenCookie.Expires = time.Now().Add(time.Hour * 24 * 7)
+	accessTokenCookie.Path= "/"
+	accessTokenCookie.HttpOnly = true
+	accessTokenCookie.Secure = false
 
 	refreshTokenCookie := new (http.Cookie)
 	refreshTokenCookie.Name = "refresh_token"
 	refreshTokenCookie.Value = tokens["refresh_token"]
 	refreshTokenCookie.Expires = time.Now().Add(time.Hour * 24 * 30)
+	refreshTokenCookie.Path = "/"
+	refreshTokenCookie.HttpOnly = true
+    refreshTokenCookie.Secure = false
 
 	c.SetCookie(accessTokenCookie)
 	c.SetCookie(refreshTokenCookie)
@@ -130,11 +153,17 @@ func localRegister(c echo.Context) error {
 	accessTokenCookie.Name = "access_token"
 	accessTokenCookie.Value = tokens["access_token"]
 	accessTokenCookie.Expires = time.Now().Add(time.Hour * 24 * 7)
+	accessTokenCookie.Path= "/"
+	accessTokenCookie.HttpOnly = true
+	accessTokenCookie.Secure = false
 
 	refreshTokenCookie := new (http.Cookie)
 	refreshTokenCookie.Name = "refresh_token"
 	refreshTokenCookie.Value = tokens["refresh_token"]
 	refreshTokenCookie.Expires = time.Now().Add(time.Hour * 24 * 30)
+	refreshTokenCookie.Path = "/"
+	refreshTokenCookie.HttpOnly = true
+	refreshTokenCookie.Secure = false
 
 	c.SetCookie(accessTokenCookie)
 	c.SetCookie(refreshTokenCookie)
@@ -144,5 +173,40 @@ func localRegister(c echo.Context) error {
 		"user": serialized,
 		"refreshToken": tokens["refresh_token"],
 		"accessToken": tokens["access_token"],
+	})
+}
+
+func logout(c echo.Context) error {
+	access, errA := c.Cookie("access_token")
+	if errA != nil {
+		return c.JSON(http.StatusNotFound, echo.Map{
+			"ok": false,
+			"message": errA,
+		})
+	}
+
+	refresh, errR := c.Cookie("refresh_token")
+	if errR != nil {
+		return c.JSON(http.StatusNotFound, echo.Map{
+			"ok": false,
+			"message": errR,
+		})
+	}
+
+	refresh.Value = ""
+	refresh.Path = "/"
+	refresh.Expires = time.Now()
+	refresh.HttpOnly = true
+	refresh.Secure = false
+	access.Value = ""
+	access.Path = "/"
+	access.Expires = time.Now()
+	access.HttpOnly = true
+	access.Secure = false
+
+	c.SetCookie(access)
+	c.SetCookie(refresh)
+	return c.JSON(http.StatusOK, echo.Map{
+		"ok": true,
 	})
 }

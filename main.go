@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/OhMinsSup/lafu-server/middlewares"
 	"os"
 
 	"github.com/OhMinsSup/lafu-server/api"
@@ -26,6 +27,7 @@ func main() {
 
 	e.Validator = lib.NewValidator()
 	e.Logger.SetLevel(log.INFO)
+	e.Use(database.Inject(db))
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
@@ -35,8 +37,7 @@ func main() {
 		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 		AllowMethods:     []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
-
-	e.Use(database.Inject(db))
+	e.Use(middlewares.Authorization)
 
 	api.ApplyRoutes(e)
 
