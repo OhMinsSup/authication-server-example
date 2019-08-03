@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func test(c echo.Context) error {
+func authInfo(c echo.Context) error {
 	accessTokenCookie, err1 := c.Cookie("access_token")
 	refreshTokenCookie, err2 := c.Cookie("refresh_token")
 	if err1 != nil || err2 != nil {
@@ -22,6 +22,7 @@ func test(c echo.Context) error {
 
 	return c.JSON(200, echo.Map{
 		"ok": true,
+		"userId": c.Get("userId"),
 		"access_token": accessTokenCookie,
 		"refresh_token": refreshTokenCookie,
 	})

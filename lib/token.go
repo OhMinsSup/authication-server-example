@@ -32,9 +32,7 @@ func GenerateUserToken(accessData JSON, refreshData JSON) (map[string]string, er
 		"user": accessData,
 		"exp": accessDate.Unix(),
 	})
-	log.Println(accessToken)
 	access, errAccess := accessToken.SignedString(jwtKey)
-	log.Println("access: ",errAccess)
 	if errAccess != nil {
 		return nil, errAccess
 	}
@@ -44,7 +42,6 @@ func GenerateUserToken(accessData JSON, refreshData JSON) (map[string]string, er
 		"exp": refreshDate.Unix(),
 	})
 	refresh, errRefresh := refreshToken.SignedString(jwtKey)
-	log.Println("refresh: ",errRefresh)
 	if errRefresh != nil {
 		return nil, errRefresh
 	}
