@@ -11,9 +11,9 @@ import (
 )
 
 func authInfo(c echo.Context) error {
-	accessTokenCookie, err1 := c.Cookie("access_token")
-	refreshTokenCookie, err2 := c.Cookie("refresh_token")
-	if err1 != nil || err2 != nil {
+	accessTokenCookie, errA := c.Cookie("access_token")
+	refreshTokenCookie, errR := c.Cookie("refresh_token")
+	if errA != nil || errR != nil {
 		return c.JSON(404, echo.Map{
 			"ok": false,
 			"message": "토큰이 없습니다",
@@ -23,8 +23,8 @@ func authInfo(c echo.Context) error {
 	return c.JSON(200, echo.Map{
 		"ok": true,
 		"userId": c.Get("userId"),
-		"access_token": accessTokenCookie,
-		"refresh_token": refreshTokenCookie,
+		"access_token": accessTokenCookie.Value,
+		"refresh_token": refreshTokenCookie.Value,
 	})
 }
 

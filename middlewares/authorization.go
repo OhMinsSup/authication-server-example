@@ -63,6 +63,16 @@ func refresh(c echo.Context, refreshToken, accessToken string) (string, error) {
 	return refreshData["id"].(string), nil
 }
 
+func Authorized(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		exists := c.Get("userId")
+		if exists != nil {
+			return next(c)
+		}
+
+		return echo.NewHTTPError(http.StatusUnauthorized, "로그인후 이용해주세요")
+	}
+}
 
 func Authorization(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {

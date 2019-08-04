@@ -15,12 +15,16 @@
   - 패스워드 비교
   - AuthToken 이 존재하면 삭제
 
-[] Authorization
+[0] Authorization
   - 로그인을 못하면 접근 못하는 미들웨어 생성
   - 미들웨어 생성
   - 발급기간이 지나면 refresh token을 자동으로 생성
   - 리펙토링
- 
+  
+[0] 로그아웃
+
+[0] auth 관련 swagger 작업
+    - 회원가입용만 작성할 것
 ## GO Modules 커맨드 정리
 
 - go mod init [module-name]

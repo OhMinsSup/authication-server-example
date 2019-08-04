@@ -24,7 +24,67 @@ var doc = `{
     "host": "http://localhost:7000/api/v1.0",
 	"basePath": "/api/v1.0",
 	"paths": {
-
+		"/auth/register/local": {
+			"post": {
+				"description": "회원가입",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "회원가입",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "이메일",
+                        "name": "email",
+                        "required": true
+                    },
+					{
+                        "type": "string",
+                        "description": "유저명",
+                        "name": "username",
+                        "required": true						
+					},
+					{
+                        "type": "string",
+                        "description": "패스워드",
+                        "name": "password",
+                        "required": true	
+					}
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "object",
+                        }
+                    },	
+                    "400": {
+                        "description": "VALIDATE_ERROR & WRONG_SCHEMA_BODY_DATA",
+                        "schema": {
+                            "type": "object",
+                        }
+                    },
+                    "401": {
+                        "description": "패스워드가 일치하지 않습니다",
+                        "schema": {
+                            "type": "object",
+                        }
+                    },
+                    "403": {
+                        "description": "계정을 찾을 수 없습니다.",
+                        "schema": {
+                            "type": "object",
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "schema": {
+                            "type": "object",
+                        }
+                    },
+				}
+			}
+		}
 	}
 }`
 
